@@ -1,0 +1,43 @@
+---
+kind: pipeline
+name: default
+type: docker
+
+steps:
+  - name: lint
+    image: golangci/golangci-lint
+    commands:
+      - golangci-lint run --enable-all
+  - name: test
+    image: golang
+    environment:
+      nats_health_check_nats_url: "nats://nats:4222"
+      nats_health_check_streaming_cluster: "4lie"
+    commands:
+      - go test -v ./... -covermode=atomic -coverprofile=coverage.out
+  - name: coverage
+    image: plugins/codecov
+    settings:
+      token:
+        from_secret: codecov_token
+      files:
+        - coverage.out
+  - name: docker
+    image: plugins/docker
+    settings:
+      username: 1995parham
+      password:
+        from_secret: docker_password
+      repo: 4lie/nats-health-check
+      tags: latest
+
+services:
+  - name: nats
+    image: nats
+  - name: nats-streaming
+    image: nats-streaming
+    command:
+      - --nats_server
+      - nats://nats:4222
+      - --cluster_id
+      - 4lie
