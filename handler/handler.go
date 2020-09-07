@@ -1,4 +1,4 @@
-package nats
+package handler
 
 import "github.com/nats-io/nats.go"
 

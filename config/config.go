@@ -2,6 +2,7 @@ package config
 
 import (
 	"strings"
+	"time"
 
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
@@ -25,7 +26,9 @@ type (
 
 	// NATS configuration.
 	NATS struct {
-		URL string `koanf:"url"`
+		URL           string        `koanf:"url"`
+		MaxReconnect  int           `koanf:"max-reconnect"`
+		ReconnectWait time.Duration `koanf:"reconnect-wait"`
 	}
 
 	// NATS Streaming Configuration.
@@ -41,7 +44,7 @@ func New() Config {
 	k := koanf.New(".")
 
 	// load default configuration from file
-	if err := k.Load(structs.Provider(Default(), "konaf"), nil); err != nil {
+	if err := k.Load(structs.Provider(Default(), "koanf"), nil); err != nil {
 		logrus.Fatalf("error loading default: %s", err)
 	}
 
