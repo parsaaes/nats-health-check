@@ -40,4 +40,4 @@ services:
       - --nats_server
       - nats://nats:4222
       - --cluster_id
-      - 4lie
+      - charlie
